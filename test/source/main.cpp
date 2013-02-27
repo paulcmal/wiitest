@@ -77,9 +77,7 @@ int main() {
 	  GRRLIB_Rectangle(right.x, right.y, right.width, right.height, CLR_WHITE,1);
 	  GRRLIB_Circle(move.x, move.y, move.radius, CLR_WHITE,2);	  
 	  //GRRLIB_DrawImg(irPointer.x, irPointer.y, pointer, 0, 1, 1, CLR_WHITE);
-	  //================ END DRAW =============================
 
-	  //================= TEST PART============================
 	  //GRRLIB_DrawImg(0,0,titlescreen,0,1,1,CLR_UNKNOW);
 	  char* posX =(char*)malloc(sizeof(char));
 	  char* posY =(char*)malloc(sizeof(char));
@@ -92,18 +90,18 @@ int main() {
 	  free(posX);
 	  free(posY);
 	  GRRLIB_Render();
-	  //================== END TEST ==============================
+	  //================== DRAW TEST ==============================
 
-
+      // Calculate the new positions, speeds, etc…
 	  isMoving(move, right, left, pass, speed, b);
+
+      // Move the player's pointer
 	  bMove(right,irPointer);
+      // Move the IA player
 	  ia(left,move,speed);
-	  //char* value =(char*)malloc(sizeof(char));
-	  //sprintf(value,"%f",b);
-	  //GRRLIB_Printf(20 + 80, 16 + 90,texFont,  CLR_WHITE, 2 , value);
-	  //char* lucas =(char*)malloc(sizeof(char));
-	  //sprintf(lucas,"%f",move.y);
-	  //GRRLIB_Printf(20 + 80, 16 + 90, texFont, CLR_WHITE, 2, lucas);
+
+      // If the ball reaches one side of the screen,
+      // Start a new game (no count of points for now)
 	  if(move.x - move.radius > maxX || move.x + move.radius < 0){
 	    move.x = maxX/2;
 	    move.y = maxY/2;

@@ -32,7 +32,7 @@ void isMoving(Circle& move, Button r, Button l, int& pass,
 	      float& speed, float& b){
   if(isUp(move)){
     b = -b;
-    move.y = move.y + (move.radius - move.y);
+    move.y = move.radius;
   }
   if(isDown(move)){
     b = -b;
