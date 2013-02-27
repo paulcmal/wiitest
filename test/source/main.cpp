@@ -20,6 +20,8 @@ GXRModeObj* IR_Init(){
 }
 
 void bMove(Button& b, ir_t irPointer){
+  // Moves the button with a Wiimote
+  // If button goes outside of the screen, replaces it inside
   if(irPointer.y + b.height > maxY)
     b.y = maxY - b.height;
   else
@@ -28,10 +30,10 @@ void bMove(Button& b, ir_t irPointer){
 
 int main() {
 	
-	// Graphique render
+	// Initializing GRRLIB
 	GRRLIB_Init();
 	
-	// Wiimotes
+	// Initializing Wiimotes
 	WPAD_Init();
 	// IR init
 	rmode = VIDEO_GetPreferredMode(NULL);
@@ -60,7 +62,6 @@ int main() {
 	bool finProgramme = false;	
 	int pass = 0;
 	float b=0.0;
-	float teta=0.0;
 	float speed = 1.0;
 
 	while (!finProgramme){
@@ -91,22 +92,17 @@ int main() {
 	  free(posX);
 	  free(posY);
 	  GRRLIB_Render();
-	  if(isIn(move,right))
-	     GRRLIB_Printf( 48,  95, texFont, CLR_WHITE, 2, " right yes");
-	  
-	  if(isIn(move,left))
-	     GRRLIB_Printf( 48,  125, texFont, CLR_WHITE, 2, " left yes");
 	  //================== END TEST ==============================
 
 
-	  isMoving(move, right, left, pass,speed,b,teta);
+	  isMoving(move, right, left, pass, speed, b);
 	  bMove(right,irPointer);
 	  ia(left,move,speed);
-	  char* value =(char*)malloc(sizeof(char));
-	  sprintf(value,"%f",b);
-	  GRRLIB_Printf(20 + 80, 16 + 90,texFont,  CLR_WHITE, 2 , value);
-	  char* lucas =(char*)malloc(sizeof(char));
-	  sprintf(lucas,"%f",move.y);
+	  //char* value =(char*)malloc(sizeof(char));
+	  //sprintf(value,"%f",b);
+	  //GRRLIB_Printf(20 + 80, 16 + 90,texFont,  CLR_WHITE, 2 , value);
+	  //char* lucas =(char*)malloc(sizeof(char));
+	  //sprintf(lucas,"%f",move.y);
 	  //GRRLIB_Printf(20 + 80, 16 + 90, texFont, CLR_WHITE, 2, lucas);
 	  if(move.x - move.radius > maxX || move.x + move.radius < 0){
 	    move.x = maxX/2;

@@ -8,14 +8,19 @@
 
 
 float random(float low, float high){
+  // Return a random float
   return((float)rand()/(float)RAND_MAX/(high-low));
 }
 
 bool isUp(Circle c){
+  // Returns whether the circle's middle is inside the screen
+  // (from the bottom)
   return(c.y - c.radius < 0);
 }
 
 bool isDown(Circle c){
+  // Returns whether the circle's middle is inside the screen
+  // (from the top)
   return(c.y + c.radius >= maxY);
 }
 
@@ -24,7 +29,7 @@ double position(Circle c, Button b){
 }
 
 void isMoving(Circle& move, Button r, Button l, int& pass,
-	      float& speed, float& b,float& teta){
+	      float& speed, float& b){
   if(isUp(move)){
     b = -b;
     move.y = move.y + (move.radius - move.y);
