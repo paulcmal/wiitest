@@ -52,17 +52,17 @@ int main() {
 
 	// Objects
 	Button left;
-	left.initButton(0,maxY/2,15,40);
+	left.initButton(0, maxY/2, 15, 40);
 	Button right;
-	right.initButton(maxX-15,0,15,40);	
+	right.initButton(maxX-15, maxY/2, 15, 40);	
 	Circle move;
-	move.initCircle(maxX/2 ,maxY/2 ,20);
+	move.initCircle(maxX/2, maxY/2, 20);
 
 	// Globals variables
 	bool finProgramme = false;	
 	int pass = 0;
 	float b=0.0;
-	float speed = 1.0;
+	float speed = 1.5;
 
 	while (!finProgramme){
 		
@@ -109,7 +109,7 @@ int main() {
 	    move.y = maxY/2;
 	    b = 0.0;
 	    pass = 0;
-	    speed = 1.0;
+	    speed = 1.5;
 	  }
 	}
 	
