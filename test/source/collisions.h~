@@ -1,0 +1,10 @@
+// collisions.h
+#ifndef _COLLISIONS_H
+#define _COLLISIONS_H
+
+#include "button_class.h"
+#include "circle_class.h"
+
+int test(Button b){return 3;}
+
+#endif
