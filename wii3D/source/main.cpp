@@ -93,7 +93,7 @@ int main() {
 
         // Switch to 2D mode
         GRRLIB_2dMode();
-        GRRLIB_Printf((640-(16*29))/2, 20, tex_font, 0xFFFFFFFF, 1, "ENCULER AVEC DES MENHIRS");
+        GRRLIB_Printf((640-(16*29))/2, 20, tex_font, 0xFFFFFFFF, 1, "jorgan est un con");
 
         GRRLIB_Render();
     }
