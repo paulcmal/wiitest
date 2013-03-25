@@ -1,0 +1,16 @@
+#include <iostream>
+#include <grrlib.h>
+#include <stdlib.h>
+#include <wiiuse/wpad.h>
+
+class Personnage
+{
+   public:
+   Personnage();
+   
+   private:
+   int life;
+   
+   
+   
+};

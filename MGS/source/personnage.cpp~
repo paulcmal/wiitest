@@ -1,0 +1,6 @@
+#include "personnage.h"
+
+Personnage::Personnage()
+{
+   life=10;
+}

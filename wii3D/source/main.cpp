@@ -7,7 +7,7 @@
 #include <malloc.h>
 #include <wiiuse/wpad.h>
 
-#include "font_png.h"
+#include "font.h"
 
 int main() {
     float a=0;
@@ -17,7 +17,7 @@ int main() {
     GRRLIB_Init();
     WPAD_Init();
 
-    GRRLIB_texImg *tex_font = GRRLIB_LoadTexture(font_png);
+    GRRLIB_texImg *tex_font = GRRLIB_LoadTexture(font);
     GRRLIB_InitTileSet(tex_font, 16, 16, 32);
 
     GRRLIB_Settings.antialias = true;
@@ -89,11 +89,11 @@ int main() {
             GX_Position3f32(1.0f,-1.0f,1.0f);
             GX_Color1u32(col[2]);
         GX_End();
-        a+=0.5f;
+        //a+=0.5f;
 
         // Switch to 2D mode
         GRRLIB_2dMode();
-        GRRLIB_Printf((640-(16*29))/2, 20, tex_font, 0xFFFFFFFF, 1, "jorgan est un con");
+        GRRLIB_Printf((640-(16*29))/2, 20, tex_font, 0xFFFFFFFF, 1, "TesT  FssssF");
 
         GRRLIB_Render();
     }
