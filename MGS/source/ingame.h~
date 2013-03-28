@@ -1,0 +1,27 @@
+#include "def.h"
+#include "personnage.h"
+
+class Ingame
+{
+     public:  // méthodes
+     Ingame(Personnage& Snake);   // constructeur
+     void moveSnake(Personnage& Snake);
+     void drawDecor(Personnage Snake);
+     void drawPlayer();
+     void destructeur();
+     
+     private:
+     GRRLIB_texImg* decor01;
+     GRRLIB_texImg* decor02;
+     GRRLIB_texImg* decor03;
+     GRRLIB_texImg* decor04;
+     GRRLIB_texImg* decor05;
+     GRRLIB_texImg* decor06;
+     GRRLIB_texImg* decor07;
+     GRRLIB_texImg* decor08;
+     //int Snake_x;
+     //Personnage Snake;
+
+     
+     
+};

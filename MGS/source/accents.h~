@@ -1,5 +1,0 @@
-#define ACC_E_A < // é
-#define ACC_E_G > // è
-#define ACC_E_C ^ // ê
-#define ACC_U = // ù
-#define ACC_A _ // à

@@ -15,7 +15,7 @@ int main(int argc, char **argv) {
     
     GRRLIB_Init(); // Initialise the Graphics & Video subsystem
     WPAD_Init(); // Initialise the Wiimotes
-    rmode = VIDEO_GetPreferredMode(NULL);
+    //rmode = VIDEO_GetPreferredMode(NULL);
     GXRModeObj *rmode = IR_Init();  // IR init
     WPAD_SetVRes(WPAD_CHAN_ALL,rmode->fbWidth,rmode->xfbHeight);  // set Xmax, Ymax
     //WPAD_SetVRes(WPAD_CHAN_ALL,640,480);  // set Xmax, Ymax

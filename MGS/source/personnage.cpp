@@ -5,4 +5,5 @@
 Personnage::Personnage()
 {
    life=10;
+   saute = false;
 }

@@ -1,5 +1,0 @@
-#include "def.h"
-#include "dialogues.h"
-#include <font_png.h>
-
-void draw_dialogue(char* texte);

@@ -16,7 +16,7 @@
 #define DIAL_14 "Tu devras peut-être neutraliser les responsables du projet avant de détruire le Metal Gear."
 #define DIAL_14B "Leur équipe se compose de: \
 Pierre Schott: expert en electronique. \
-Eric Koniecsny: expert en robotique. "
+Eric Konieczny: expert en robotique. "
 #define DIAL_14C "Sylvie Zago: experte en physique. \
 Hubert Wassner: expert en informatique."
 #define DIAL_15 "Let's go !"

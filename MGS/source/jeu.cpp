@@ -1,6 +1,7 @@
 #include "jeu.h"
 #include "dialogues.h"
 #include "codec.h"
+#include "ingame.h"
 /*********** Images Importées *********/
 #include <pic1_png.h>
 #include <pic2_png.h>
@@ -16,6 +17,9 @@
 #include <about_png.h>
 #include <codec1_png.h>
 #include <codec2_png.h>
+/*#include <decor01_png.h>
+#include <decor02_png.h>
+#include <decor03_png.h>*/
 #include <font_png.h>
 //#include <music01_mp3.h>
 
@@ -122,7 +126,7 @@ void Jeu::codec()
       WPAD_ScanPads();
       //if(WPAD_ButtonsDown(0) & WPAD_BUTTON_A)
          //return;
-      GRRLIB_DrawImg(0,0,photo1,0,1,1,0xFFFFFFFF);
+      GRRLIB_DrawImg(0,0,photo1,0,1,1,CLR_WHITE);
       GRRLIB_Render();
    }
    GRRLIB_FreeTexture(photo1);
@@ -170,7 +174,7 @@ void Jeu::codec()
       WPAD_ScanPads();
       if(WPAD_ButtonsDown(0) & WPAD_BUTTON_A)
          return;
-      GRRLIB_DrawImg(0,0,robot,0,1,1,0xFFFFFFFF);
+      GRRLIB_DrawImg(0,0,robot,0,1,1,CLR_WHITE);
       GRRLIB_Render();
    }
    GRRLIB_FreeTexture(robot);
@@ -243,7 +247,45 @@ void Jeu::about()
 
 void Jeu::play()
 {
+   Personnage Snake;
+   Ingame ingame;
+   ingame.initSnake(Snake);
+   GRRLIB_texImg * texFont = GRRLIB_LoadTexture(font_png);
+   GRRLIB_InitTileSet(texFont, 8, 16, 0);
+   /*GRRLIB_texImg* decor01;
+   decor01=GRRLIB_LoadTexture(decor01_png);
+   GRRLIB_texImg* decor02;
+   decor02=GRRLIB_LoadTexture(decor02_png);
+   GRRLIB_texImg* decor03;
+   decor03=GRRLIB_LoadTexture(decor03_png);*/
+   bool finProgramme = false;
+   while(!finProgramme)
+   {
+     WPAD_ScanPads();
+     if(WPAD_ButtonsDown(0) & WPAD_BUTTON_HOME) finProgramme = true;
+     ingame.moveSnake(Snake);
+     ingame.drawDecor(Snake);
+     ingame.drawPlayer(Snake);
 
+
+
+     //---------------------- TEST ----------------------------
+     char* posX =(char*)malloc(sizeof(char));
+     char* posY =(char*)malloc(sizeof(char));
+     sprintf(posX,"%d",Snake.x);
+     sprintf(posY,"%d",Snake.y);
+     GRRLIB_Printf(64, 16 + 15, texFont, 0x000FFF, 2, posX);
+     GRRLIB_Printf(64, 16 + 60, texFont, 0x000FFF, 2, posY);
+     //-------------------- END TEST -------------------------
+
+
+
+     GRRLIB_Render();
+   }
+   ingame.destructeur();
+   /*GRRLIB_FreeTexture(decor01);
+   GRRLIB_FreeTexture(decor02);
+   GRRLIB_FreeTexture(decor03);*/
 }
 
 

@@ -4,10 +4,10 @@ class Personnage
 {
    public:
    Personnage();
-   
-   private:
    int life;
-   
+   int x;  // abscisse
+   int y;
+   bool saute;
    
    
 };
