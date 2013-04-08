@@ -1,12 +1,13 @@
 #include "def.h"
 #include "personnage.h"
+#include <time.h>
 
 class Ingame
 {
  public:  // méthodes
   Ingame();   // constructeur
   void initSnake(Personnage& Snake);
-  void moveSnake(Personnage& Snake);
+  void moveSnake(Personnage& Snake, time_t& start);
   void drawDecor(Personnage Snake);
   void drawPlayer(Personnage Snake);
   void destructeur();

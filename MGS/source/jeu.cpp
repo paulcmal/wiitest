@@ -250,6 +250,10 @@ void Jeu::play()
    Personnage Snake;
    Ingame ingame;
    ingame.initSnake(Snake);
+   
+   time_t now;
+   now = time(0);
+
    GRRLIB_texImg * texFont = GRRLIB_LoadTexture(font_png);
    GRRLIB_InitTileSet(texFont, 8, 16, 0);
    /*GRRLIB_texImg* decor01;
@@ -263,7 +267,7 @@ void Jeu::play()
    {
      WPAD_ScanPads();
      if(WPAD_ButtonsDown(0) & WPAD_BUTTON_HOME) finProgramme = true;
-     ingame.moveSnake(Snake);
+     ingame.moveSnake(Snake,now);
      ingame.drawDecor(Snake);
      ingame.drawPlayer(Snake);
 
@@ -272,8 +276,8 @@ void Jeu::play()
      //---------------------- TEST ----------------------------
      char* posX =(char*)malloc(sizeof(char));
      char* posY =(char*)malloc(sizeof(char));
-     sprintf(posX,"%d",Snake.x);
-     sprintf(posY,"%d",Snake.y);
+     sprintf(posX,"%.1f",Snake.x);
+     sprintf(posY,"%.1f",Snake.y);
      GRRLIB_Printf(64, 16 + 15, texFont, 0x000FFF, 2, posX);
      GRRLIB_Printf(64, 16 + 60, texFont, 0x000FFF, 2, posY);
      //-------------------- END TEST -------------------------

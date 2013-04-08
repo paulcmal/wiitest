@@ -5,9 +5,9 @@ class Personnage
    public:
    Personnage();
    int life;
-   int x;  // abscisse
-   int y;
+   float x;  // abscisse
+   float y;
    bool saute;
-   
+   int plan;
    
 };
