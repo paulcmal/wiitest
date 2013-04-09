@@ -1,6 +1,6 @@
 #include "def.h"
-#include "personnage.h"
 #include <time.h>
+#include "balle.h"
 
 class Ingame
 {

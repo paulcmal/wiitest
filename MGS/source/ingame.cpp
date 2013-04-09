@@ -34,10 +34,30 @@ void Ingame::initSnake(Personnage& Snake){
 void Ingame::moveSnake(Personnage& Snake, time_t& start)
 {
   WPAD_ScanPads();
-  if(WPAD_ButtonsHeld(WPAD_CHAN_0) & WPAD_BUTTON_RIGHT)     
+  if(WPAD_ButtonsHeld(WPAD_CHAN_0) & WPAD_BUTTON_RIGHT && Snake.x < 5020)     
     Snake.x+=3.0;
-  if(WPAD_ButtonsHeld(WPAD_CHAN_0) & WPAD_BUTTON_LEFT && Snake.x > 0)
+  if(WPAD_ButtonsHeld(WPAD_CHAN_0) & WPAD_BUTTON_LEFT && Snake.x > 75)
     Snake.x-=3.0;
+
+  //Changement de Plan
+  if(WPAD_ButtonsHeld(WPAD_CHAN_0) & WPAD_BUTTON_PLUS && Snake.plan < 3)
+    Snake.plan++;
+  if(WPAD_ButtonsHeld(WPAD_CHAN_0) & WPAD_BUTTON_MINUS && Snake.plan > 1)
+    Snake.plan--;
+
+  //Calcul du x relatif
+  if(Snake.x >= 320 && Snake.x <= 4800)
+    Snake.xrelatif = 200;
+  if(Snake.x > 4800)
+    Snake.xrelatif = Snake.x - 4600;
+  if(Snake.x < 320)
+    Snake.xrelatif = Snake.x - 120;
+
+  //Tir
+  if(WPAD_ButtonsHeld(WPAD_CHAN_0) & WPAD_BUTTON_DOWN){
+    Balle balle;
+    balle.DrawBalle(Snake,balle);
+  }
 
   //Saut de Snake
   float saut = ((Snake.y-250)/100);
@@ -58,6 +78,7 @@ void Ingame::moveSnake(Personnage& Snake, time_t& start)
   if(WPAD_ButtonsHeld(WPAD_CHAN_0) & WPAD_BUTTON_UP && Snake.y == 400)
     Snake.saute = true;
 }
+
 
 void Ingame::drawDecor(Personnage Snake)
 {
@@ -109,14 +130,8 @@ void Ingame::drawDecor(Personnage Snake)
 
 
 void Ingame::drawPlayer(Personnage Snake)
-{
-  if(Snake.x >= 320 && Snake.x <= 4800)
-    GRRLIB_DrawImg(200,Snake.y-250 - 34+Snake.plan*17,perso,0,1,1,CLR_WHITE);
-  if(Snake.x > 4800)
-    GRRLIB_DrawImg(Snake.x - 4600,Snake.y-250 - 34+Snake.plan*17,perso,0,1,1,CLR_WHITE);
-  if(Snake.x < 320)
-    GRRLIB_DrawImg(Snake.x - 120,Snake.y-250 - 34+Snake.plan*17,perso,0,1,1,CLR_WHITE);
-
+{ 
+  GRRLIB_DrawImg(Snake.xrelatif,Snake.y-250 - 34+Snake.plan*17,perso,0,1,1,CLR_WHITE);
 }
 
 void Ingame::destructeur()

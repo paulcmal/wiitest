@@ -108,6 +108,13 @@ clean:
 	@echo clean ...
 	@rm -fr $(BUILD) $(OUTPUT).elf $(OUTPUT).dol *.~ *.cpp~ *.h~ *.cpp#
 
+
+#---------------------------------------------------------------------------------
+cleanall:
+	@echo clean ...
+	@rm -fr $(BUILD) $(OUTPUT).elf $(OUTPUT).dol *.~ *.cpp~ *.h~ *.cpp#
+
+
 #---------------------------------------------------------------------------------
 run:
 	wiiload $(TARGET).dol
