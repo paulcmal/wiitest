@@ -17,13 +17,10 @@
 #include <about_png.h>
 #include <codec1_png.h>
 #include <codec2_png.h>
-/*#include <decor01_png.h>
-#include <decor02_png.h>
-#include <decor03_png.h>*/
 #include <font_png.h>
 //#include <music01_mp3.h>
 
-using namespace std;
+
 
 /************ METHODES DE LA CLASSE JEU **********/
 Jeu::Jeu()  // constructeur
@@ -250,9 +247,8 @@ void Jeu::play()
    Personnage Snake;
    Ingame ingame;
    ingame.initSnake(Snake);
+   vector<Balle> b;
    
-   time_t now;
-   now = time(0);
 
    GRRLIB_texImg * texFont = GRRLIB_LoadTexture(font_png);
    GRRLIB_InitTileSet(texFont, 8, 16, 0);
@@ -267,9 +263,10 @@ void Jeu::play()
    {
      WPAD_ScanPads();
      if(WPAD_ButtonsDown(0) & WPAD_BUTTON_HOME) finProgramme = true;
-     ingame.moveSnake(Snake,now);
+     ingame.moveSnake(Snake,b);
      ingame.drawDecor(Snake);
      ingame.drawPlayer(Snake);
+     ingame.drawProjectiles(Snake, b);
 
 
 
@@ -280,8 +277,12 @@ void Jeu::play()
      sprintf(posY,"%.1f",Snake.y);
      GRRLIB_Printf(64, 16 + 15, texFont, 0x000FFF, 2, posX);
      GRRLIB_Printf(64, 16 + 60, texFont, 0x000FFF, 2, posY);
+     
+     char* nb =(char*)malloc(sizeof(char));
+     sprintf(nb,"%.d",count(Snake.projectiles));
+     GRRLIB_Printf(64, 150, texFont, 0x000FFF, 2, nb);
      //-------------------- END TEST -------------------------
-
+     
 
 
      GRRLIB_Render();

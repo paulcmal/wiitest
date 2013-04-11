@@ -1,3 +1,6 @@
+#ifndef JEU_H
+#define JEU_H
+
 #include <time.h>  // pour temporiser avec time();
 #include <string.h>
 
@@ -15,3 +18,5 @@ class Jeu
      
      
 };
+
+#endif

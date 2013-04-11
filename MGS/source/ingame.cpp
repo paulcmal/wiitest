@@ -8,6 +8,7 @@
 #include <decor07_png.h>
 #include <decor08_png.h>
 #include <perso_png.h>
+#include <balle_png.h>
 
 
 Ingame::Ingame()
@@ -21,23 +22,29 @@ Ingame::Ingame()
    decor07=GRRLIB_LoadTexture(decor07_png);
    decor08=GRRLIB_LoadTexture(decor08_png);
    perso=GRRLIB_LoadTexture(perso_png);
+   balle=GRRLIB_LoadTexture(balle_png);
    //Personnage Snake;
 }
 
-void Ingame::initSnake(Personnage& Snake){
-  Snake.x = 100;
+void Ingame::initSnake(Personnage& Snake){  // Pourquoi pas dans le constructeur de la classe Perso ???
+  Snake.x = MARGE_G;
   Snake.y = 400;
   Snake.life = 10;
   Snake.saute = false;
 }
 
-void Ingame::moveSnake(Personnage& Snake, time_t& start)
+void Ingame::moveSnake(Personnage& Snake, vector<Balle>& b)
 {
+  //Deplacement lateral
   WPAD_ScanPads();
-  if(WPAD_ButtonsHeld(WPAD_CHAN_0) & WPAD_BUTTON_RIGHT && Snake.x < 5020)     
+  if(WPAD_ButtonsHeld(WPAD_CHAN_0) & WPAD_BUTTON_RIGHT && Snake.x < 4930) {
     Snake.x+=3.0;
-  if(WPAD_ButtonsHeld(WPAD_CHAN_0) & WPAD_BUTTON_LEFT && Snake.x > 75)
+    Snake.view=LOOK_RIGHT;
+  }
+  if(WPAD_ButtonsHeld(WPAD_CHAN_0) & WPAD_BUTTON_LEFT && Snake.x > 5) {
     Snake.x-=3.0;
+    Snake.view=LOOK_LEFT;
+  }
 
   //Changement de Plan
   if(WPAD_ButtonsHeld(WPAD_CHAN_0) & WPAD_BUTTON_PLUS && Snake.plan < 3)
@@ -45,18 +52,21 @@ void Ingame::moveSnake(Personnage& Snake, time_t& start)
   if(WPAD_ButtonsHeld(WPAD_CHAN_0) & WPAD_BUTTON_MINUS && Snake.plan > 1)
     Snake.plan--;
 
-  //Calcul du x relatif
-  if(Snake.x >= 320 && Snake.x <= 4800)
-    Snake.xrelatif = 200;
-  if(Snake.x > 4800)
-    Snake.xrelatif = Snake.x - 4600;
-  if(Snake.x < 320)
-    Snake.xrelatif = Snake.x - 120;
-
+  //Calcul du x relatif (entre 0 et 640)
+  if(Snake.x < MARGE_G)
+    Snake.xrelatif = Snake.x;
+  if(Snake.x >= MARGE_G && Snake.x <= 5120-MARGE)
+    Snake.xrelatif = MARGE_G;
+  if(Snake.x > 5120-MARGE)  // longueur totale moins marge à droite
+    Snake.xrelatif = 640 - (5120 - Snake.x);
+  
   //Tir
   if(WPAD_ButtonsHeld(WPAD_CHAN_0) & WPAD_BUTTON_DOWN){
     Balle balle;
-    balle.DrawBalle(Snake,balle);
+    balle.x = Snake.xrelatif + 150;
+    balle.y = Snake.y - 200;
+    b.push_back(balle);
+    Snake.projectiles=ajouteF((int)Snake.x,Snake.projectiles);
   }
 
   //Saut de Snake
@@ -66,7 +76,7 @@ void Ingame::moveSnake(Personnage& Snake, time_t& start)
   if(Snake.y <= 260)
     saut = 0.3;
 
-  //Limite pour Snake
+  //Limite verticale pour Snake
   if(Snake.y > 400)
     Snake.y = 400.0;
   if(!Snake.saute && Snake.y < 400)
@@ -82,48 +92,58 @@ void Ingame::moveSnake(Personnage& Snake, time_t& start)
 
 void Ingame::drawDecor(Personnage Snake)
 {
-   if(Snake.x<320)
+   // if(Snake.etage==0) {
+   if(Snake.x<MARGE_G)
    {
       GRRLIB_DrawImg(0,0,decor01,0,1,1,CLR_WHITE);
+      Snake.debutDraw=0;
    }
-   if(Snake.x>=320 && Snake.x<960)  // pendant le passage dans ce if, (Snake.x+320)%640 va de 0 à 639
+   if(Snake.x>=640-MARGE && Snake.x<1280-MARGE)  // pendant le passage dans ce if, (Snake.x+MARGE)%640 va de 0 à 639
    {
-     GRRLIB_DrawPart(0,0,(int)(Snake.x+320)%640,0,640-((int)(Snake.x+320)%640),480,decor01,0,1,1,CLR_WHITE);
-      GRRLIB_DrawPart(640-((int)(Snake.x+320)%640),0,0,0,(int)(Snake.x+320)%640,480,decor02,0,1,1,CLR_WHITE);
+      GRRLIB_DrawPart(0,0,(int)(Snake.x+MARGE)%640,0,640-((int)(Snake.x+MARGE)%640),480,decor01,0,1,1,CLR_WHITE);
+      GRRLIB_DrawPart(640-((int)(Snake.x+MARGE)%640),0,0,0,(int)(Snake.x+MARGE)%640,480,decor02,0,1,1,CLR_WHITE);
+      Snake.debutDraw=((int)Snake.x+MARGE)%640;
    }
-   if(Snake.x>=960 && Snake.x<1600)
+   if(Snake.x>=1280-MARGE && Snake.x<1920-MARGE)
    {
-      GRRLIB_DrawPart(0,0,(int)(Snake.x+320)%640,0,640-((int)(Snake.x+320)%640),480,decor02,0,1,1,CLR_WHITE);
-      GRRLIB_DrawPart(640-((int)(Snake.x+320)%640),0,0,0,(int)(Snake.x+320)%640,480,decor03,0,1,1,CLR_WHITE);
+      GRRLIB_DrawPart(0,0,(int)(Snake.x+MARGE)%640,0,640-((int)(Snake.x+MARGE)%640),480,decor02,0,1,1,CLR_WHITE);
+      GRRLIB_DrawPart(640-((int)(Snake.x+MARGE)%640),0,0,0,(int)(Snake.x+MARGE)%640,480,decor03,0,1,1,CLR_WHITE);
+      Snake.debutDraw=960+((int)Snake.x+MARGE)%640;
    }
-   if(Snake.x>=1600 && Snake.x<2240)
+   if(Snake.x>=1920-MARGE && Snake.x<2560-MARGE)
    {
-      GRRLIB_DrawPart(0,0,(int)(Snake.x+320)%640,0,640-((int)(Snake.x+320)%640),480,decor03,0,1,1,CLR_WHITE);
-      GRRLIB_DrawPart(640-((int)(Snake.x+320)%640),0,0,0,(int)(Snake.x+320)%640,480,decor04,0,1,1,CLR_WHITE);
+      GRRLIB_DrawPart(0,0,(int)(Snake.x+MARGE)%640,0,640-((int)(Snake.x+MARGE)%640),480,decor03,0,1,1,CLR_WHITE);
+      GRRLIB_DrawPart(640-((int)(Snake.x+MARGE)%640),0,0,0,(int)(Snake.x+MARGE)%640,480,decor04,0,1,1,CLR_WHITE);
+      Snake.debutDraw=1600+((int)Snake.x+MARGE)%640;
    }
-   if(Snake.x>=2240 && Snake.x<2880)
+   if(Snake.x>=2560-MARGE && Snake.x<3200-MARGE)
    {
-      GRRLIB_DrawPart(0,0,(int)(Snake.x+320)%640,0,640-((int)(Snake.x+320)%640),480,decor04,0,1,1,CLR_WHITE);
-      GRRLIB_DrawPart(640-((int)(Snake.x+320)%640),0,0,0,(int)(Snake.x+320)%640,480,decor05,0,1,1,CLR_WHITE);
+      GRRLIB_DrawPart(0,0,(int)(Snake.x+MARGE)%640,0,640-((int)(Snake.x+MARGE)%640),480,decor04,0,1,1,CLR_WHITE);
+      GRRLIB_DrawPart(640-((int)(Snake.x+MARGE)%640),0,0,0,(int)(Snake.x+MARGE)%640,480,decor05,0,1,1,CLR_WHITE);
+      Snake.debutDraw=2240+((int)Snake.x+MARGE)%640;
    }
-   if(Snake.x>=2880 && Snake.x<3520)
+   if(Snake.x>=3200-MARGE && Snake.x<3840-MARGE)
    {
-      GRRLIB_DrawPart(0,0,(int)(Snake.x+320)%640,0,640-((int)(Snake.x+320)%640),480,decor05,0,1,1,CLR_WHITE);
-      GRRLIB_DrawPart(640-((int)(Snake.x+320)%640),0,0,0,(int)(Snake.x+320)%640,480,decor06,0,1,1,CLR_WHITE);
+      GRRLIB_DrawPart(0,0,(int)(Snake.x+MARGE)%640,0,640-((int)(Snake.x+MARGE)%640),480,decor05,0,1,1,CLR_WHITE);
+      GRRLIB_DrawPart(640-((int)(Snake.x+MARGE)%640),0,0,0,(int)(Snake.x+MARGE)%640,480,decor06,0,1,1,CLR_WHITE);
+      Snake.debutDraw=2880+((int)Snake.x+MARGE)%640;
    }
-   if(Snake.x>=3520 && Snake.x<4160)
+   if(Snake.x>=3840-MARGE && Snake.x<4480-MARGE)
    {
-      GRRLIB_DrawPart(0,0,(int)(Snake.x+320)%640,0,640-((int)(Snake.x+320)%640),480,decor06,0,1,1,CLR_WHITE);
-      GRRLIB_DrawPart(640-((int)(Snake.x+320)%640),0,0,0,(int)(Snake.x+320)%640,480,decor07,0,1,1,CLR_WHITE);
+      GRRLIB_DrawPart(0,0,(int)(Snake.x+MARGE)%640,0,640-((int)(Snake.x+MARGE)%640),480,decor06,0,1,1,CLR_WHITE);
+      GRRLIB_DrawPart(640-((int)(Snake.x+MARGE)%640),0,0,0,(int)(Snake.x+MARGE)%640,480,decor07,0,1,1,CLR_WHITE);
+      Snake.debutDraw=3520+((int)Snake.x+MARGE)%640;
    }
-   if(Snake.x>=4160 && Snake.x<4800)
+   if(Snake.x>=4480-MARGE && Snake.x<5120-MARGE)
    {
-      GRRLIB_DrawPart(0,0,(int)(Snake.x+320)%640,0,640-((int)(Snake.x+320)%640),480,decor07,0,1,1,CLR_WHITE);
-      GRRLIB_DrawPart(640-((int)(Snake.x+320)%640),0,0,0,(int)(Snake.x+320)%640,480,decor08,0,1,1,CLR_WHITE);
+      GRRLIB_DrawPart(0,0,(int)(Snake.x+MARGE)%640,0,640-((int)(Snake.x+MARGE)%640),480,decor07,0,1,1,CLR_WHITE);
+      GRRLIB_DrawPart(640-((int)(Snake.x+MARGE)%640),0,0,0,(int)(Snake.x+MARGE)%640,480,decor08,0,1,1,CLR_WHITE);
+      Snake.debutDraw=4160+((int)Snake.x+MARGE)%640;
    }
-   if(Snake.x>=4800)
+   if(Snake.x>=5120-MARGE)
    {
       GRRLIB_DrawImg(0,0,decor08,0,1,1,CLR_WHITE);
+      Snake.debutDraw=4800;
    }   
 }
 
@@ -131,7 +151,21 @@ void Ingame::drawDecor(Personnage Snake)
 
 void Ingame::drawPlayer(Personnage Snake)
 { 
-  GRRLIB_DrawImg(Snake.xrelatif,Snake.y-250 - 34+Snake.plan*17,perso,0,1,1,CLR_WHITE);
+   GRRLIB_DrawImg(Snake.xrelatif,Snake.y-240 - 48+Snake.plan*24,perso,0,1,1,CLR_WHITE);
+}
+
+void Ingame::drawProjectiles(Personnage Snake, vector<Balle>& b)
+{
+  int n = 0;
+  int vsize = (int)b.size();
+  for(int i = 0; i < vsize; i++){
+    b.at(i).x += 3.0;
+  }
+  while(n < vsize){
+    Balle tmp = b.at(n);
+    GRRLIB_DrawImg(tmp.x, tmp.y, balle,0,1,1,CLR_WHITE); 
+    n++;
+  }
 }
 
 void Ingame::destructeur()

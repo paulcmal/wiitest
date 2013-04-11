@@ -6,6 +6,8 @@ Personnage::Personnage()
 {
    life=10;
    saute = false;
+   etage=0;
    plan = 2;
-   view = true;
+   view = LOOK_RIGHT;
+   projectiles=NULL; // Trolololol
 }

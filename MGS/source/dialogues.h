@@ -1,3 +1,6 @@
+#ifndef DIALOGUES_H
+#define DIALOGUES_H
+
 #define DIAL_1 "Alors, Snake, tu as réussi à t'infiltrer ?"
 #define DIAL_2 "La routine, quoi..."
 #define DIAL_3 "Mais tu ne m'as toujours pas dit ce que je fais ici."
@@ -39,5 +42,5 @@ GRRLIB_DrawImg(0, 0, codec2, 0, 1, 1, 0xFFFFFFFF);\
 draw_dialogue(dial);\
 GRRLIB_Render();}
 
-
+#endif
    

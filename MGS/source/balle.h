@@ -1,14 +1,18 @@
+#ifndef BALLE_H
+#define BALLE_H
+
 #include "def.h"
-#include "personnage.h"
 
 class Balle{
  public:
   float x;
+  float y;
   float xrelatif;
   float speed;
   Balle();
-  void DrawBalle(Personnage Perso, Balle& balle);
 
  private:
-  GRRLIB_texImg* perso;
+  GRRLIB_texImg* picBalle;
 };
+
+#endif

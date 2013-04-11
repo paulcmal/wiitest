@@ -1,16 +1,25 @@
+#ifndef INGAME_H
+#define INGAME_H
+
 #include "def.h"
+#include "personnage.h"
 #include <time.h>
 #include "balle.h"
+#include <vector>
+
+using namespace std;
 
 class Ingame
 {
  public:  // méthodes
   Ingame();   // constructeur
   void initSnake(Personnage& Snake);
-  void moveSnake(Personnage& Snake, time_t& start);
+  void moveSnake(Personnage& Snake, vector<Balle>& b);
   void drawDecor(Personnage Snake);
   void drawPlayer(Personnage Snake);
+  void drawProjectiles(Personnage Snake, vector<Balle>& b);
   void destructeur();
+  
   
  private:
   GRRLIB_texImg* decor01;
@@ -22,9 +31,8 @@ class Ingame
   GRRLIB_texImg* decor07;
   GRRLIB_texImg* decor08;
   GRRLIB_texImg* perso;
-  //int Snake_x;
-  //Personnage Snake;
-  
-     
+  GRRLIB_texImg* balle;
      
 };
+
+#endif
