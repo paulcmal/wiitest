@@ -248,7 +248,7 @@ void Jeu::play()
    Ingame ingame;
    ingame.initSnake(Snake);
    vector<Balle> b;
-   
+   ir_t irPointer;
 
    GRRLIB_texImg * texFont = GRRLIB_LoadTexture(font_png);
    GRRLIB_InitTileSet(texFont, 8, 16, 0);
@@ -259,13 +259,18 @@ void Jeu::play()
    GRRLIB_texImg* decor03;
    decor03=GRRLIB_LoadTexture(decor03_png);*/
    bool finProgramme = false;
-   while(!finProgramme)
-   {
+
+   //variables a inclure dans Snake
+   unsigned int wait = TILE_DELAY, direction = TILE_DOWN, 
+     direction_new = TILE_DOWN;
+   int left = 0, top = 0, frame = TILE_DOWN + 1;
+   while(!finProgramme){
      WPAD_ScanPads();
+     WPAD_IR(WPAD_CHAN_0, &irPointer);
      if(WPAD_ButtonsDown(0) & WPAD_BUTTON_HOME) finProgramme = true;
-     ingame.moveSnake(Snake,b);
+     ingame.moveSnake(Snake,b,irPointer);
      ingame.drawDecor(Snake);
-     ingame.drawPlayer(Snake);
+     ingame.drawPlayer(Snake,wait,direction,direction_new,left,top,frame);
      ingame.drawProjectiles(Snake, b);
 
 

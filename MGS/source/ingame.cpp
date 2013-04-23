@@ -9,6 +9,8 @@
 #include <decor08_png.h>
 #include <perso_png.h>
 #include <balle_png.h>
+#include <sprite12_png.h>
+
 
 
 Ingame::Ingame()
@@ -23,6 +25,7 @@ Ingame::Ingame()
    decor08=GRRLIB_LoadTexture(decor08_png);
    perso=GRRLIB_LoadTexture(perso_png);
    balle=GRRLIB_LoadTexture(balle_png);
+   tex_sprite_png = GRRLIB_LoadTexture(sprite12_png);
    //Personnage Snake;
 }
 
@@ -33,7 +36,7 @@ void Ingame::initSnake(Personnage& Snake){  // Pourquoi pas dans le constructeur
   Snake.saute = false;
 }
 
-void Ingame::moveSnake(Personnage& Snake, vector<Balle>& b)
+void Ingame::moveSnake(Personnage& Snake, vector<Balle>& b, ir_t irPointer)
 {
   //Deplacement lateral
   WPAD_ScanPads();
@@ -61,12 +64,14 @@ void Ingame::moveSnake(Personnage& Snake, vector<Balle>& b)
     Snake.xrelatif = 640 - (5120 - Snake.x);
   
   //Tir
-  if(WPAD_ButtonsHeld(WPAD_CHAN_0) & WPAD_BUTTON_DOWN){
+  if(WPAD_ButtonsHeld(0) & WPAD_BUTTON_DOWN){
     Balle balle;
     balle.x = Snake.xrelatif + 150;
     balle.y = Snake.y - 200;
-    b.push_back(balle);
-    Snake.projectiles=ajouteF((int)Snake.x,Snake.projectiles);
+    balle.xdir = irPointer.x;
+    balle.ydir = irPointer.y;
+    if(b.back().x - balle.x > 100 || b.size() == 0) //fréquence en mode cheat (ou shit pour ceux qui préferent)
+      b.push_back(balle);
   }
 
   //Saut de Snake
@@ -149,9 +154,51 @@ void Ingame::drawDecor(Personnage Snake)
 
 
 
-void Ingame::drawPlayer(Personnage Snake)
+void Ingame::drawPlayer(Personnage Snake,unsigned int& wait, unsigned int& direction,unsigned int& direction_new,int& left,int& top,int& frame)
 { 
-   GRRLIB_DrawImg(Snake.xrelatif,Snake.y-240 - 48+Snake.plan*24,perso,0,1,1,CLR_WHITE);
+  u32 wpadheld;
+  
+  // GRRLIB_DrawImg(Snake.xrelatif,Snake.y-240 - 48+Snake.plan*24,perso,0,1,1,CLR_WHITE);
+  WPAD_ScanPads();
+  GRRLIB_InitTileSet(tex_sprite_png, 24, 32, 0);
+  wpadheld = WPAD_ButtonsHeld(0);
+   // Draw a sprite
+  GRRLIB_DrawTile(320+left, 240+top, tex_sprite_png, 0, 2, 2, CLR_WHITE, frame);
+  if(GRRLIB_RectOnRect(320+left, 240+top, 48, 64, 618, 434, 12, 30))
+  {
+    WPAD_Rumble(WPAD_CHAN_0, 1);
+  }
+  if(direction_new != direction) {
+    // Direction has changed, modify frame immediately
+    direction = direction_new;
+    frame = direction;
+    wait = 0;
+  }
+  wait++;
+  if(wait > 10) {
+    // wait is needed for the number of frame per second to be OK
+    wait = 0;
+    if(wpadheld & WPAD_BUTTON_LEFT || wpadheld & WPAD_BUTTON_RIGHT ) {
+      frame++;
+    }
+    else {
+      frame = direction + 1;  // Not moving
+      wait = 10;      // Ready to move
+    }
+    if(frame > (int)direction+2) frame = (int)direction;
+  }
+
+
+
+
+  if(wpadheld & WPAD_BUTTON_LEFT){
+    left--;
+    direction_new = TILE_LEFT;
+  }
+  if(wpadheld & WPAD_BUTTON_RIGHT){
+    left++;
+    direction_new = TILE_RIGHT;
+  }
 }
 
 void Ingame::drawProjectiles(Personnage Snake, vector<Balle>& b)
@@ -159,11 +206,16 @@ void Ingame::drawProjectiles(Personnage Snake, vector<Balle>& b)
   int n = 0;
   int vsize = (int)b.size();
   for(int i = 0; i < vsize; i++){
-    b.at(i).x += 3.0;
+    b.at(i).x = b.at(i).x + 3.0;
+    //b.at(i).y += 1.0;
   }
   while(n < vsize){
     Balle tmp = b.at(n);
-    GRRLIB_DrawImg(tmp.x, tmp.y, balle,0,1,1,CLR_WHITE); 
+    if(abs(tmp.x - Snake.xrelatif) > 500)
+      b.erase(b.begin()+n);
+    else
+      GRRLIB_DrawImg(tmp.x, tmp.y, balle,0,1,1,CLR_WHITE);
+    vsize = (int)b.size();
     n++;
   }
 }

@@ -7,7 +7,8 @@ class Balle{
  public:
   float x;
   float y;
-  float xrelatif;
+  float xdir;
+  float ydir;
   float speed;
   Balle();
 

@@ -1,3 +1,4 @@
+
 /*===========================================
         MGS
 ============================================*/
@@ -5,7 +6,7 @@
 #include "jeu.h"
 #include "personnage.h"
 
-GXRModeObj* IR_Init() {  // optimiser la vidéo (?)
+GXRModeObj* IR_Init() {  // IR pointer
     GXRModeObj *rmode = NULL;
     rmode = VIDEO_GetPreferredMode(NULL);
     return rmode;
@@ -21,21 +22,18 @@ int main(int argc, char **argv) {
     //WPAD_SetVRes(WPAD_CHAN_ALL,640,480);  // set Xmax, Ymax
     WPAD_SetDataFormat(WPAD_CHAN_0,WPAD_FMT_BTNS_ACC_IR);  // active capteur IR
     GRRLIB_SetBackgroundColour(0x00, 0x00, 0x00, 0xFF);
-    
+    VIDEO_WaitVSync();
     //ASND_Init(); //On initialise le systeme de sons
     //MP3Player_Init(); //On initialise le lecteur MP3
-    
     Jeu jeu;  // Création d'un objet jeu de classe Jeu
     jeu.intro();  // Lance "Esiea production"
     
     
     while(1)
     {
-        jeu.menu();   // Lance menu du jeu
-        jeu.codec();
-        jeu.play();
-        
-        
+      jeu.menu();   // Lance menu du jeu
+      jeu.codec();
+      jeu.play();
     }
     
     

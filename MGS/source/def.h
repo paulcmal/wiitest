@@ -22,6 +22,14 @@
 #define MARGE 500  // marge à droite de Snake (distance entre Snake et la droite de l'écran)
 #define MARGE_G 640-MARGE
 
+
+// Tile stuff
+#define TILE_DELAY  10
+#define TILE_UP     12*0
+#define TILE_RIGHT  12*1*3
+#define TILE_DOWN   12*2*3
+#define TILE_LEFT   12*3*3
+
 #define PUSH_ANY_BUTTON()   if(WPAD_ButtonsDown(0) & WPAD_BUTTON_HOME)  break;  \
 if(WPAD_ButtonsDown(0) & WPAD_BUTTON_A)  break;  \
 if(WPAD_ButtonsDown(0) & WPAD_BUTTON_B)  break;  \
