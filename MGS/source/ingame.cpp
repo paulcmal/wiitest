@@ -55,11 +55,11 @@ void Ingame::moveSnake(Personnage& Snake, vector<Balle>& b, ir_t irPointer)
   }
 
   //Changement de Plan
-  if(wpaddown & WPAD_BUTTON_PLUS && Snake.plan < 3){
+  if(wpaddown & WPAD_BUTTON_PLUS && Snake.plan < 3 && Snake.y == 400){
     Snake.plan++;
     Snake.direction_new = TILE_DOWN;
   }
-  if(wpaddown & WPAD_BUTTON_MINUS && Snake.plan > 1){
+  if(wpaddown & WPAD_BUTTON_MINUS && Snake.plan > 1 && Snake.y == 400){
     Snake.plan--;
     Snake.direction_new = TILE_UP;
   }
@@ -73,13 +73,19 @@ void Ingame::moveSnake(Personnage& Snake, vector<Balle>& b, ir_t irPointer)
     Snake.xrelatif = 640 - (5120 - Snake.x);
   
   //Tir
-  if(wpaddown & WPAD_BUTTON_DOWN){
+  if((wpadheld & WPAD_BUTTON_DOWN)
+     &&(Snake.direction == TILE_RIGHT || Snake.direction == TILE_LEFT
+	|| Snake.direction == TILE_JUMPDL || Snake.direction == TILE_JUMPDR)){
     Balle balle;
     balle.x = Snake.xrelatif + 150;
     balle.y = Snake.y - 200;
     balle.xdir = Snake.direction;
     if(abs(b.back().x - balle.x) > 100 || b.size() == 0) //fréquence en mode cheat (ou shit pour ceux qui préferent)
       b.push_back(balle);
+    /*if(Snake.direction == TILE_LEFT || Snake.direction == TILE_JUMPDL)
+      Snake.direction_new = TILE_TIRL;
+    if(Snake.direction == TILE_RIGHT || Snake.direction == TILE_JUMPDR)
+    Snake.direction_new = TILE_TIRR;*/
   }
 
   //Saut de Snake
@@ -233,11 +239,10 @@ void Ingame::drawProjectiles(Personnage Snake, vector<Balle>& b)
   int n = 0;
   int vsize = (int)b.size();
   for(int i = 0; i < vsize; i++){
-    if(b.at(i).xdir == TILE_LEFT)
+    if(b.at(i).xdir == TILE_LEFT || b.at(i).xdir == TILE_JUMPDL)
       b.at(i).x -= 3.0;
-    if(b.at(i).xdir == TILE_RIGHT)
+    if(b.at(i).xdir == TILE_RIGHT || b.at(i).xdir == TILE_JUMPDR)
       b.at(i).x += 3.0;
-    //b.at(i).y += 1.0;
   }
   while(n < vsize){
     Balle tmp = b.at(n);
@@ -261,6 +266,7 @@ void Ingame::destructeur()
    GRRLIB_FreeTexture(decor07);
    GRRLIB_FreeTexture(decor08);
    GRRLIB_FreeTexture(perso);
+   
    GRRLIB_FreeTexture(balle);
    GRRLIB_FreeTexture(tex_sprite_png);
 }

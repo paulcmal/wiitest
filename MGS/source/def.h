@@ -31,6 +31,8 @@
 #define TILE_LEFT   12*3*3
 #define TILE_JUMPDR  12*6*3+3
 #define TILE_JUMPDL  12*6*3+5
+#define TILE_TIRR   12*5*3+7
+#define TILE_TIRL   12*7*3+7
 
 
 #define PUSH_ANY_BUTTON()   if(WPAD_ButtonsDown(0) & WPAD_BUTTON_HOME)  break;  \

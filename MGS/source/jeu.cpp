@@ -252,12 +252,6 @@ void Jeu::play()
 
    GRRLIB_texImg * texFont = GRRLIB_LoadTexture(font_png);
    GRRLIB_InitTileSet(texFont, 8, 16, 0);
-   /*GRRLIB_texImg* decor01;
-   decor01=GRRLIB_LoadTexture(decor01_png);
-   GRRLIB_texImg* decor02;
-   decor02=GRRLIB_LoadTexture(decor02_png);
-   GRRLIB_texImg* decor03;
-   decor03=GRRLIB_LoadTexture(decor03_png);*/
    bool finProgramme = false;
 
    while(!finProgramme){
@@ -285,9 +279,12 @@ void Jeu::play()
      char* nb2 =(char*)malloc(sizeof(char));
      sprintf(nb2,"%.d",(int)Snake.direction);
      GRRLIB_Printf(64, 170, texFont, 0x000FFF, 2, nb2);
-      char* nb3 =(char*)malloc(sizeof(char));
-      sprintf(nb3,"%.d",(int)Snake.direction_new);
+     char* nb3 =(char*)malloc(sizeof(char));
+     sprintf(nb3,"%.d",(int)Snake.direction_new);
      GRRLIB_Printf(64, 190, texFont, 0x000FFF, 2, nb3);
+
+
+
      /*char* nb4 =(char*)malloc(sizeof(char));
      sprintf(nb4,"%.d",left);
      GRRLIB_Printf(64, 210, texFont, 0x000FFF, 2, nb4);*/
@@ -297,10 +294,8 @@ void Jeu::play()
 
      GRRLIB_Render();
    }
+   b.clear();
    ingame.destructeur();
-   /*GRRLIB_FreeTexture(decor01);
-   GRRLIB_FreeTexture(decor02);
-   GRRLIB_FreeTexture(decor03);*/
 }
 
 
