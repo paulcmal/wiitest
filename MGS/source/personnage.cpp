@@ -10,4 +10,10 @@ Personnage::Personnage()
    plan = 2;
    view = LOOK_RIGHT;
    projectiles=NULL; // Trolololol
+   
+   
+   wait = TILE_DELAY;
+   direction = TILE_DOWN; 
+   direction_new = TILE_DOWN;
+   frame = TILE_DOWN + 1;
 }

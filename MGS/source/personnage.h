@@ -22,7 +22,12 @@ class Personnage
    float debutDraw;  // abscisse absolue du point du decor le plus a gauche dessiné (utile pour dessiner les balles...etc)
    cell* projectiles; //WTF ?!
    
-   
+
+   //Seulement utilisable pour l'animation
+   unsigned int wait;
+   unsigned int direction;
+   unsigned int direction_new;
+   int frame;
    
 };
 

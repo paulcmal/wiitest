@@ -260,17 +260,13 @@ void Jeu::play()
    decor03=GRRLIB_LoadTexture(decor03_png);*/
    bool finProgramme = false;
 
-   //variables a inclure dans Snake
-   unsigned int wait = TILE_DELAY, direction = TILE_DOWN, 
-     direction_new = TILE_DOWN;
-   int left = 0, top = 0, frame = TILE_DOWN + 1;
    while(!finProgramme){
      WPAD_ScanPads();
      WPAD_IR(WPAD_CHAN_0, &irPointer);
      if(WPAD_ButtonsDown(0) & WPAD_BUTTON_HOME) finProgramme = true;
      ingame.moveSnake(Snake,b,irPointer);
      ingame.drawDecor(Snake);
-     ingame.drawPlayer(Snake,wait,direction,direction_new,left,top,frame);
+     ingame.drawPlayer(Snake);
      ingame.drawProjectiles(Snake, b);
 
 
@@ -284,8 +280,17 @@ void Jeu::play()
      GRRLIB_Printf(64, 16 + 60, texFont, 0x000FFF, 2, posY);
      
      char* nb =(char*)malloc(sizeof(char));
-     sprintf(nb,"%.d",count(Snake.projectiles));
+     sprintf(nb,"%.d",(int)Snake.frame);
      GRRLIB_Printf(64, 150, texFont, 0x000FFF, 2, nb);
+     char* nb2 =(char*)malloc(sizeof(char));
+     sprintf(nb2,"%.d",(int)Snake.direction);
+     GRRLIB_Printf(64, 170, texFont, 0x000FFF, 2, nb2);
+      char* nb3 =(char*)malloc(sizeof(char));
+      sprintf(nb3,"%.d",(int)Snake.direction_new);
+     GRRLIB_Printf(64, 190, texFont, 0x000FFF, 2, nb3);
+     /*char* nb4 =(char*)malloc(sizeof(char));
+     sprintf(nb4,"%.d",left);
+     GRRLIB_Printf(64, 210, texFont, 0x000FFF, 2, nb4);*/
      //-------------------- END TEST -------------------------
      
 
