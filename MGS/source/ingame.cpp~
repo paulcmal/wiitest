@@ -43,22 +43,26 @@ void Ingame::moveSnake(Personnage& Snake, vector<Balle>& b, ir_t irPointer)
   u32 wpadheld, wpaddown;
   wpadheld = WPAD_ButtonsHeld(0);
   wpaddown = WPAD_ButtonsDown(0);
-  if(wpadheld & WPAD_BUTTON_RIGHT && Snake.x < 4930) {
+  if(wpadheld & WPAD_BUTTON_RIGHT && Snake.x < 4930 && Snake.y == 400){
     Snake.x+=3.0;
     Snake.view=LOOK_RIGHT;
     Snake.direction_new = TILE_RIGHT;
   }
-  if(wpadheld & WPAD_BUTTON_LEFT && Snake.x > 5) {
+  if(wpadheld & WPAD_BUTTON_LEFT && Snake.x > 5 && Snake.y == 400){
     Snake.x-=3.0;
     Snake.view=LOOK_LEFT;
     Snake.direction_new = TILE_LEFT;
   }
 
   //Changement de Plan
-  if(wpaddown & WPAD_BUTTON_PLUS && Snake.plan < 3)
+  if(wpaddown & WPAD_BUTTON_PLUS && Snake.plan < 3 && Snake.y == 400){
     Snake.plan++;
-  if(wpaddown & WPAD_BUTTON_MINUS && Snake.plan > 1)
+    Snake.direction_new = TILE_DOWN;
+  }
+  if(wpaddown & WPAD_BUTTON_MINUS && Snake.plan > 1 && Snake.y == 400){
     Snake.plan--;
+    Snake.direction_new = TILE_UP;
+  }
 
   //Calcul du x relatif (entre 0 et 640)
   if(Snake.x < MARGE_G)
@@ -69,14 +73,19 @@ void Ingame::moveSnake(Personnage& Snake, vector<Balle>& b, ir_t irPointer)
     Snake.xrelatif = 640 - (5120 - Snake.x);
   
   //Tir
-  if(wpaddown & WPAD_BUTTON_DOWN){
+  if((wpadheld & WPAD_BUTTON_DOWN)
+     &&(Snake.direction == TILE_RIGHT || Snake.direction == TILE_LEFT
+	|| Snake.direction == TILE_JUMPDL || Snake.direction == TILE_JUMPDR)){
     Balle balle;
     balle.x = Snake.xrelatif + 150;
     balle.y = Snake.y - 200;
-    balle.xdir = irPointer.x;
-    balle.ydir = irPointer.y;
-    if(b.back().x - balle.x > 100 || b.size() == 0) //fréquence en mode cheat (ou shit pour ceux qui préferent)
+    balle.xdir = Snake.direction;
+    if(abs(b.back().x - balle.x) > 100 || b.size() == 0) //fréquence en mode cheat (ou shit pour ceux qui préferent)
       b.push_back(balle);
+    /*if(Snake.direction == TILE_LEFT || Snake.direction == TILE_JUMPDL)
+      Snake.direction_new = TILE_TIRL;
+    if(Snake.direction == TILE_RIGHT || Snake.direction == TILE_JUMPDR)
+    Snake.direction_new = TILE_TIRR;*/
   }
 
   //Saut de Snake
@@ -87,16 +96,38 @@ void Ingame::moveSnake(Personnage& Snake, vector<Balle>& b, ir_t irPointer)
     saut = 0.3;
 
   //Limite verticale pour Snake
-  if(Snake.y > 400)
+  if(Snake.y > 400){
     Snake.y = 400.0;
-  if(!Snake.saute && Snake.y < 400)
+    // On change les Tiles
+    if(Snake.direction == TILE_JUMPDR)
+      Snake.direction_new = TILE_RIGHT;
+    if(Snake.direction == TILE_JUMPDL)
+      Snake.direction_new = TILE_LEFT;
+  }
+  if(!Snake.saute && Snake.y < 400){
     Snake.y += saut*3.0;
-  if(Snake.saute && Snake.y > 250)
+    if(Snake.direction == TILE_JUMPDL)
+      Snake.x -= 2.0;
+    if(Snake.direction == TILE_JUMPDR)
+      Snake.x += 2.0;
+  }
+  if(Snake.saute && Snake.y > 250){
     Snake.y -= saut*3.0;
-  if(Snake.y <= 250)
+    if(Snake.direction == TILE_LEFT)
+      Snake.x -= 2.0;
+    if(Snake.direction == TILE_RIGHT)
+      Snake.x += 2.0;
+  }
+  if(Snake.y <= 250){
     Snake.saute = false;
+     if(Snake.direction == TILE_RIGHT)
+      Snake.direction_new = TILE_JUMPDR;
+    if(Snake.direction == TILE_LEFT)
+      Snake.direction_new = TILE_JUMPDL;
+  }
   if(WPAD_ButtonsHeld(WPAD_CHAN_0) & WPAD_BUTTON_UP && Snake.y == 400)
     Snake.saute = true;
+  //Ajouter les tiles du debut de saut
 }
 
 
@@ -167,11 +198,11 @@ void Ingame::drawPlayer(Personnage& Snake)
   GRRLIB_InitTileSet(tex_sprite_png, 24, 32, 0);
   wpadheld = WPAD_ButtonsHeld(0);
    // Draw a sprite
-  GRRLIB_DrawTile(Snake.xrelatif, Snake.y, tex_sprite_png, 0, 2, 2, CLR_WHITE, Snake.frame);
-  if(GRRLIB_RectOnRect(Snake.xrelatif, Snake.y, 48, 64, 618, 434, 12, 30))
-  {
-    WPAD_Rumble(WPAD_CHAN_0, 1);
-  }
+  GRRLIB_DrawTile(Snake.xrelatif, Snake.y -48 + Snake.plan*24, tex_sprite_png, 0, 2, 2, CLR_WHITE, Snake.frame);
+
+
+  //---------------A NE PAS METTRE DANS movePlayer ----------------//
+  //Sinon on ne rafraichit pas les frames correctement :)
   if(Snake.direction_new != Snake.direction) {
     // Direction has changed, modify frame immediately
     Snake.direction = Snake.direction_new;
@@ -179,30 +210,28 @@ void Ingame::drawPlayer(Personnage& Snake)
     Snake.wait = 0;
   }
   Snake.wait++;
-  if(Snake.wait > 10) {
+  if(Snake.wait > TILE_DELAY && !Snake.saute) {
     // wait is needed for the number of frame per second to be OK
     Snake.wait = 0;
-    if(wpadheld & WPAD_BUTTON_LEFT || wpadheld & WPAD_BUTTON_RIGHT ) {
-      Snake.frame++;
+    if(Snake.y == 400){
+    // On prend la bonne texture en fonction de la direction
+      if(wpadheld & WPAD_BUTTON_LEFT)
+	Snake.frame--;
+      else{
+	if(wpadheld & WPAD_BUTTON_RIGHT)
+	  Snake.frame++;
+	else{
+	  Snake.frame = Snake.direction + 1;
+	  Snake.wait = 10;
+	}
+      }
     }
-    else {
-      Snake.frame = Snake.direction + 1;  // Not moving
-      Snake.wait = 10;      // Ready to move
-    }
-    if(Snake.frame > (int)Snake.direction+2) Snake.frame = (int)Snake.direction;
+    if(Snake.frame > (int)Snake.direction+2) 
+      Snake.frame = (int)Snake.direction;
+    if(Snake.frame < (int)Snake.direction)
+      Snake.frame = (int)Snake.direction+2;
   }
-
-
-
-
-  /*if(wpadheld & WPAD_BUTTON_LEFT){
-    left--;
-    direction_new = TILE_LEFT;
-  }
-  if(wpadheld & WPAD_BUTTON_RIGHT){
-    left++;
-    direction_new = TILE_RIGHT;
-    }*/
+  //----------------------------------------------------------------//
 }
 
 void Ingame::drawProjectiles(Personnage Snake, vector<Balle>& b)
@@ -210,8 +239,10 @@ void Ingame::drawProjectiles(Personnage Snake, vector<Balle>& b)
   int n = 0;
   int vsize = (int)b.size();
   for(int i = 0; i < vsize; i++){
-    b.at(i).x = b.at(i).x + 3.0;
-    //b.at(i).y += 1.0;
+    if(b.at(i).xdir == TILE_LEFT || b.at(i).xdir == TILE_JUMPDL)
+      b.at(i).x -= 3.0;
+    if(b.at(i).xdir == TILE_RIGHT || b.at(i).xdir == TILE_JUMPDR)
+      b.at(i).x += 3.0;
   }
   while(n < vsize){
     Balle tmp = b.at(n);
@@ -234,5 +265,9 @@ void Ingame::destructeur()
    GRRLIB_FreeTexture(decor06);
    GRRLIB_FreeTexture(decor07);
    GRRLIB_FreeTexture(decor08);
+   GRRLIB_FreeTexture(perso);
+   
+   GRRLIB_FreeTexture(balle);
+   GRRLIB_FreeTexture(tex_sprite_png);
 }
 
